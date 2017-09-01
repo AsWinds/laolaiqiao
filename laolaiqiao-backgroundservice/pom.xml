@@ -1,0 +1,145 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<artifactId>laolaiqiao-server-starter</artifactId>
+		<groupId>com.codi.laolaiqiao</groupId>
+		<version>1.1.0-SNAPSHOT</version>
+		<relativePath>../</relativePath>
+	</parent>
+
+	<artifactId>laolaiqiao-backgroundservice</artifactId>
+	<version>1.1.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>laolaiqiao-backgroundservice</name>
+
+	<dependencies>
+        <dependency>
+            <groupId>com.codi.laolaiqiao</groupId>
+            <artifactId>laolaiqiao-biz</artifactId>
+            <version>${laolaiqiao.base.version}</version>
+        </dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- log -->
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-httpclient</groupId>
+			<artifactId>commons-httpclient</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>appassembler-maven-plugin</artifactId>
+				<version>1.9</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>assemble</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<platforms>
+						<platform>all</platform>
+					</platforms>
+					<binFileExtensions>
+						<unix>.sh</unix>
+					</binFileExtensions>
+					<encoding>{project.build.sourceEncoding}</encoding>
+					<copyConfigurationDirectory>false</copyConfigurationDirectory>
+					<repositoryLayout>flat</repositoryLayout>
+					<useWildcardClassPath>true</useWildcardClassPath>
+					<showConsoleWindow>false</showConsoleWindow>
+					<programs>
+						<program>
+							<id>startup</id>
+							<mainClass>com.codi.backgroundservice.Startup</mainClass>
+							<!-- <jvmSettings> <initialMemorySize>1024m</initialMemorySize> <extraArguments> 
+								<extraArgument>-Dlog4j.configuration=log4j.properties</extraArgument> </extraArguments> 
+								</jvmSettings> -->
+						</program>
+						<program>
+							<id>shutdown</id>
+							<mainClass>com.codi.backgroundservice.Shutdown</mainClass>
+						</program>
+					</programs>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.5.3</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<descriptor>bin.xml</descriptor>
+				</configuration>
+			</plugin>
+		</plugins>
+		<filters>
+			<filter>data/${active.profile}.properties</filter>
+		</filters>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+	</build>
+	
+	<profiles>
+		<!-- 根据不同的profile生成不同环境配置的包 -->
+		<profile>
+			<id>dev</id>
+			<properties>
+				<active.profile>dev</active.profile>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+
+		<profile>
+			<id>test</id>
+			<properties>
+				<active.profile>test</active.profile>
+			</properties>
+		</profile>
+
+		<profile>
+			<id>product</id>
+			<properties>
+				<active.profile>product</active.profile>
+			</properties>
+		</profile>
+	</profiles>
+</project>

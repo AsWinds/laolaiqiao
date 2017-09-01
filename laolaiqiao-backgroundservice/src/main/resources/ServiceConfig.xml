@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Services>
+	<Service>
+		<Code>CLANSENDMSG</Code>
+		<Name>CLAN短信发送服务</Name>
+		<ClassName>com.codi.backgroundservice.service.CLanSendSMSMessageService</ClassName>
+		<MaxThreadNumber>5</MaxThreadNumber>
+		<CoreThreadNumber>2</CoreThreadNumber>
+		<IntervalMillionSeconds>10000</IntervalMillionSeconds>
+		<StartType>0</StartType>
+		<StartTime>8:00</StartTime>
+		<NeedStart>Y</NeedStart>
+	</Service>
+</Services>

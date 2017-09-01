@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <bean class="com.codi.laolaiqiao.biz.BizSpringConfiguration"/>
+
+    <bean id="validatorAdapter" class="com.codi.laolaiqiao.common.validation.CustomSpringValidatorAdapter">
+        <constructor-arg type="javax.validation.Validator" ref="validator"/>
+    </bean>
+
+    <!-- 用于持有ApplicationContext,可以使用SpringContextHolder.getBean('xxxx')的静态方法得到spring bean对象 -->
+    <bean class="com.codi.base.spring.SpringContextHolder" lazy-init="false"/>
+    
+    <bean id="pagePlugin" class="com.codi.base.dao.plugin.page.PagePlugin">
+        <property name="properties">
+            <props>
+                <prop key="dialect">mysql</prop>
+                <prop key="pageSqlId">.*query.*</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="typeAliasesPackage" value="com.codi.superman.domain, com.codi.mc.receiver.api.domain"/>
+        <property name="mapperLocations" value="classpath*:mybatis/*.xml"/>
+        <property name="plugins">
+            <list>
+                <ref bean="pagePlugin"/>
+            </list>
+        </property>
+    </bean>
+    
+    <context:component-scan base-package="com.codi.mc.receiver.biz.**" use-default-filters="true">
+        <context:include-filter type="annotation" expression="com.codi.mc.receiver.biz.annotation.Validator"/>
+    </context:component-scan>
+    
+<!--     <beans profile="dev,uat,product">
+        <import resource="classpath:${spring.profiles.active}-spring-dubbo-consumer.xml"/>
+    </beans>
+    
+    <beans profile="dev_local">
+        <bean class="com.codi.laolaiqiao.biz.mock.MockMessageService" lazy-init="false" />
+    </beans> -->
+
+</beans>
